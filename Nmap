@@ -1,0 +1,6 @@
+-p- todos los puertos
+-sC análisis con scripts por defecto
+-sV servicios y versiones sobre los puertos detectados
+-A  análisis agresivo alias para -O -sV -sC --traceroute
+--osscan-guess análisis agresivoo para la detección del S.O
+-O  detección de S.O
