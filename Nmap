@@ -4,3 +4,5 @@
 -A  análisis agresivo alias para -O -sV -sC --traceroute
 --osscan-guess análisis agresivoo para la detección del S.O
 -O  detección de S.O
+
+nmap -p- -sC -sV -A -O 
