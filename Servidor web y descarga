@@ -1,0 +1,3 @@
+python -m SimpleHTTPServer <port_number>
+
+wget ip:port/fichero
