@@ -1,0 +1,1 @@
+find / -name [archivo_a_buscar] 2>dev/null
